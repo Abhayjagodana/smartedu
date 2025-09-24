@@ -19,49 +19,83 @@
 // };
 
 // /app/api/suggestion/toggle/[id]/route.js
+
+
+// import { NextResponse } from "next/server";
+// import { connect } from "../../../../utils/dbconfig"; // your MongoDB connection helper
+// import Suggestion from "../../../../model/suggestion"; // your Mongoose model
+
+// // DELETE a suggestion by ID
+// export async function DELETE(request, { params }) {
+//   try {
+//     await connect();
+//     const { id } = params;
+
+//     const deleted = await Suggestion.findByIdAndDelete(id);
+//     if (!deleted) {
+//       return NextResponse.json(
+//         { message: "Suggestion not found" },
+//         { status: 404 }
+//       );
+//     }
+
+//     return NextResponse.json(
+//       { message: "Suggestion deleted successfully" },
+//       { status: 200 }
+//     );
+//   } catch (error) {
+//     console.error("Error deleting suggestion:", error);
+//     return NextResponse.json(
+//       { message: "Internal Server Error" },
+//       { status: 500 }
+//     );
+//   }
+
+  
+// }
+
+
+import { NextResponse } from "next/server";
 import { connect } from "../../../../utils/dbconfig";
-import { ObjectId } from "mongodb";
+import Suggestion from "../../../../model/suggestion";
 
-// ✅ Toggle visibility (admin)
-export async function PATCH(req, { params }) {
-  const { id } = params;
-
+export async function DELETE(request, { params }) {
   try {
-    const client = await connect();
-    const db = client.db("smartedu");
-    const suggestions = db.collection("suggestions");
+    await connect();
+    const { id } = params;
 
-    const suggestion = await suggestions.findOne({ _id: new ObjectId(id) });
-    if (!suggestion) {
-      return new Response("Not found", { status: 404 });
+    const deleted = await Suggestion.findByIdAndDelete(id);
+    if (!deleted) {
+      return NextResponse.json({ message: "Suggestion not found" }, { status: 404 });
     }
+    return NextResponse.json({ message: "Suggestion deleted successfully" }, { status: 200 });
+  } catch (error) {
+    console.error("Error deleting suggestion:", error);
+    return NextResponse.json({ message: "Internal Server Error" }, { status: 500 });
+  }
+}
 
-    await suggestions.updateOne(
-      { _id: new ObjectId(id) },
-      { $set: { visible: !suggestion.visible } }
+// PUT: update suggestion
+export async function PUT(request, { params }) {
+  try {
+    await connect();
+    const { id } = params;
+    const body = await request.json();
+
+    const updated = await Suggestion.findByIdAndUpdate(
+      id,
+      { suggestion: body.suggestion },
+      { new: true }
     );
 
-    return new Response(JSON.stringify({ success: true }), { status: 200 });
-  } catch (err) {
-    console.error(err);
-    return new Response("Server error", { status: 500 });
+    if (!updated) {
+      return NextResponse.json({ message: "Suggestion not found" }, { status: 404 });
+    }
+
+    return NextResponse.json({ message: "Suggestion updated successfully", suggestion: updated }, { status: 200 });
+  } catch (error) {
+    console.error("Error updating suggestion:", error);
+    return NextResponse.json({ message: "Internal Server Error" }, { status: 500 });
   }
 }
 
-// ✅ Delete suggestion (admin)
-export async function DELETE(req, { params }) {
-  const { id } = params;
-
-  try {
-    const client = await connect();
-    const db = client.db("smartedu");
-    const suggestions = db.collection("suggestions");
-
-    await suggestions.deleteOne({ _id: new ObjectId(id) });
-
-    return new Response(JSON.stringify({ success: true }), { status: 200 });
-  } catch (err) {
-    console.error(err);
-    return new Response("Server error", { status: 500 });
-  }
-}
