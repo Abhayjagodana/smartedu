@@ -34,7 +34,7 @@ export default function BloggerLoginPage() {
         toast.success(data.message || "Login successful");
         setSuccess(data.message || "Login successful");
         setTimeout(() => {
-          router.push("/"); // Redirect after successful login
+          router.push("/blogger/"); // Redirect after successful login
         }, 2000);
       }
     } catch (err) {

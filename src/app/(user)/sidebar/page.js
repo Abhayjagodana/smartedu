@@ -55,6 +55,8 @@ export default function Sidebar({ currentPage }) {
     { href: "/About", name: "About us", page: "about" },
     { href: "/contact", name: "Contact us", page: "contact" },
     { href: "/blogger/b_login", name: "Blogger's login", page: "blogregister" },
+        // { href: "/suggestion", name: "Suggestion", page: "suggestion" },
+
     { href: "/developer", name: "Developers", page: "developers" },
     { href: "/admin", name: "Admin", page: "admin" }
   ];

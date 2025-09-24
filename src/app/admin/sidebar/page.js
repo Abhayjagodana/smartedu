@@ -95,6 +95,8 @@ export default function Sidebar({ currentPage }) {
     { href: "/admin/contact", name: "Contact", page: "contact" },
     { href: "/", name: "Client", page: "Home" },
     //{ href: "/admin/register", name: "Register", page: "register" },
+        { href: "/admin/suggestion", name: "Suggestion", page: "Suggestion" },
+
   ];
 
   return (
